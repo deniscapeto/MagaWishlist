@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MagaWishlist.Core.Authorization.Models
+namespace MagaWishlist.Core.Authentication.Models
 {
     public class User
     {

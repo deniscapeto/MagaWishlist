@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28917.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagaWishlist", "MagaWishlist\MagaWishlist.csproj", "{6EBE1E7E-F8F9-4D76-99FE-1CDDB3ADF81E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagaWishlist", "MagaWishlist\MagaWishlist.csproj", "{6EBE1E7E-F8F9-4D76-99FE-1CDDB3ADF81E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagaWishlist.Core", "MagaWishlist.Core\MagaWishlist.Core.csproj", "{5CBF7FEB-2728-4CF5-8FF5-D862C18A9C63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagaWishlist.Core", "MagaWishlist.Core\MagaWishlist.Core.csproj", "{5CBF7FEB-2728-4CF5-8FF5-D862C18A9C63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagaWishlist.Data", "MagaWishlist.Data\MagaWishlist.Data.csproj", "{98B65C1E-766F-485D-8C63-FF126DE5529B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagaWishlist.Data", "MagaWishlist.Data\MagaWishlist.Data.csproj", "{98B65C1E-766F-485D-8C63-FF126DE5529B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagaWishlist.UnitTests", "MagaWishlist.UnitTests\MagaWishlist.UnitTests.csproj", "{FCE8EED4-4020-4313-A698-FD69FF678302}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{98B65C1E-766F-485D-8C63-FF126DE5529B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98B65C1E-766F-485D-8C63-FF126DE5529B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98B65C1E-766F-485D-8C63-FF126DE5529B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCE8EED4-4020-4313-A698-FD69FF678302}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCE8EED4-4020-4313-A698-FD69FF678302}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCE8EED4-4020-4313-A698-FD69FF678302}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCE8EED4-4020-4313-A698-FD69FF678302}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

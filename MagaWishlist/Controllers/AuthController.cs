@@ -1,12 +1,9 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using MagaWishlist.Core.Authentication.Interfaces;
 using MagaWishlist.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MagaWishlist.Controllers
 {
@@ -15,13 +12,17 @@ namespace MagaWishlist.Controllers
     public class AuthController : ControllerBase
     {
         readonly IJwtSecurityTokenHelper _jwtSecurityTokenHelper;
-        public AuthController(IJwtSecurityTokenHelper jwtSecurityTokenHelper)
+        readonly IAuthenticationService _authenticationService;
+        public AuthController(
+            IJwtSecurityTokenHelper jwtSecurityTokenHelper,
+            IAuthenticationService authenticationService)
         {
             _jwtSecurityTokenHelper = jwtSecurityTokenHelper;
+            _authenticationService = authenticationService;
         }
 
         [HttpPost]
-        public ActionResult GetToken([FromBody] AuthViewModel authViewModel)
+        public async Task<ActionResult> GetTokenAsync([FromBody] AuthViewModel authViewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -32,6 +33,11 @@ namespace MagaWishlist.Controllers
 
                 return BadRequest(errors);
             }
+
+            var user = await _authenticationService.FindAsync(authViewModel.Username);
+
+            if (user == null)
+                return NotFound(authViewModel.Username);
 
             var tokenResponse = _jwtSecurityTokenHelper.CreateTokenReponse();
 

@@ -1,12 +1,11 @@
-﻿using MagaWishlist.Core.Authorization.Interfaces;
-using MagaWishlist.Core.Authorization.Models;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using MagaWishlist.Core.Authentication.Interfaces;
+using MagaWishlist.Core.Authentication.Interfaces;
+using MagaWishlist.Core.Authentication.Models;
 using System.Threading.Tasks;
 
 namespace MagaWishlist.Core.Authentication.Services
 {
-    public class AuthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly IUserRepository _userRepository;
 
