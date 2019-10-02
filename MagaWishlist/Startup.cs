@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using MagaWishlist.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,6 +22,8 @@ namespace MagaWishlist
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IJwtSecurityTokenHelper, JwtSecurityTokenHelper>();
+
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -65,12 +68,5 @@ namespace MagaWishlist
             app.UseHttpsRedirection();
             app.UseMvc();
         }
-    }
-
-    public class JwtAuthentication
-    {
-        public string SecurityKey { get; set; }
-        public string Audience { get; set; }
-        public string Issuer { get; set; }
     }
 }

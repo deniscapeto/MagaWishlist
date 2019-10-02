@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Text;
+using MagaWishlist.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -12,32 +14,30 @@ namespace MagaWishlist.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        readonly JwtAuthentication _jwtAuthentication;
-        public AuthController(IOptionsMonitor<JwtAuthentication> options)
+        readonly IJwtSecurityTokenHelper _jwtSecurityTokenHelper;
+        public AuthController(IJwtSecurityTokenHelper jwtSecurityTokenHelper)
         {
-            _jwtAuthentication = options.CurrentValue;
+            _jwtSecurityTokenHelper = jwtSecurityTokenHelper;
         }
 
-        [HttpGet]
-        public ActionResult<JwtSecurityToken> Get()
+        [HttpPost]
+        public ActionResult GetToken([FromBody] AuthViewModel authViewModel)
         {
-            var handler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtAuthentication.SecurityKey);
-            var token = new SecurityTokenDescriptor()
+            if (!ModelState.IsValid)
             {
-                Issuer = _jwtAuthentication.Issuer,
-                Audience = _jwtAuthentication.Audience,
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+                var errors = ModelState
+                    .Select(x => x.Value.Errors)
+                    .Where(y => y.Count > 0)
+                    .ToList();
 
-            return Ok(new
-            {
-                token = handler.WriteToken(handler.CreateToken(token))
-            });
+                return BadRequest(errors);
+            }
+
+            var tokenResponse = _jwtSecurityTokenHelper.CreateTokenReponse();
+
+            return Ok(tokenResponse);
         }
 
-        // GET api/values/5
         [HttpGet("{id}")]
         [Authorize]
         public ActionResult<string> Get(int id)
