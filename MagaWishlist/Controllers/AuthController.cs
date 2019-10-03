@@ -37,7 +37,7 @@ namespace MagaWishlist.Controllers
             var user = await _authenticationService.FindAsync(authViewModel.Username);
 
             if (user == null)
-                return NotFound(authViewModel.Username);
+                return Unauthorized(authViewModel.Username);
 
             var tokenResponse = _jwtSecurityTokenHelper.CreateTokenReponse();
 

@@ -44,7 +44,7 @@ namespace MagaWishlist.UnitTests.API.Controllers
             var result = (ObjectResult)await sut.GetTokenAsync(viewModel);
 
             //Assert            
-            Assert.Equal((int)HttpStatusCode.NotFound, result.StatusCode);
+            Assert.Equal((int)HttpStatusCode.Unauthorized, result.StatusCode);
         }
 
         [Fact]
