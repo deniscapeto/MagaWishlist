@@ -43,12 +43,5 @@ namespace MagaWishlist.Controllers
 
             return Ok(tokenResponse);
         }
-
-        [HttpGet("{id}")]
-        [Authorize]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
     }
 }

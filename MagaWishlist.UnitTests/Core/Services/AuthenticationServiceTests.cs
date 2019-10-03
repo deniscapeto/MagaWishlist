@@ -5,7 +5,7 @@ using NSubstitute;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace MagaWishlist.UnitTests.Core
+namespace MagaWishlist.UnitTests.Core.Services
 {
     public class AuthenticationServiceTests
     {
