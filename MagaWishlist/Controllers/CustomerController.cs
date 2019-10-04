@@ -93,7 +93,6 @@ namespace MagaWishlist.Controllers
                 return NotFound(customer);
         }
 
-        // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id)
         {

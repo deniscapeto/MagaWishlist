@@ -13,9 +13,9 @@ namespace MagaWishlist.Rest
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
 
-        public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+        public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, string policyName)
         {
-            var httpClient = _httpClientFactory.CreateClient();
+            var httpClient = string.IsNullOrEmpty(policyName) ? _httpClientFactory.CreateClient(): _httpClientFactory.CreateClient(policyName);
             return httpClient.SendAsync(request);
         }
     }

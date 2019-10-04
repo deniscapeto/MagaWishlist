@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Polly.Timeout;
 
 namespace MagaWishlist.Rest
 {
@@ -20,16 +21,32 @@ namespace MagaWishlist.Rest
             _configuration = configuration;
         }
 
-        public async Task<Product> GetProductByIdAsync(int id)
+        public async Task<WishListProduct> GetProductByIdAsync(string id)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_configuration["ProductApiUrl"]}/{id}");
 
-            var response = await _httpClientFactoryWrapper.SendAsync(request);
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClientFactoryWrapper.SendAsync(request, "product");
+            }
+            catch (TimeoutRejectedException)
+            {
+                throw new HttpRequestException("Unable to get product informations");
+            }
 
             if (response.IsSuccessStatusCode)
             {
                 string responseContent = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<Product>(responseContent);
+                var product = JsonConvert.DeserializeObject<Product>(responseContent);
+
+                return new WishListProduct()
+                {
+                    ProductId = product.id,
+                    Image = product.image,
+                    Price = product.price.ToString(),
+                    Title = product.title
+                };
             }
 
             throw new HttpRequestException("Unable to get product informations");

@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Net.Http;
 using System.Text;
 using MagaWishlist.Core.Authentication.Interfaces;
 using MagaWishlist.Core.Authentication.Services;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
+using Polly;
 
 namespace MagaWishlist
 {
@@ -35,10 +37,15 @@ namespace MagaWishlist
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IWishlistService, WishlistService>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IWishlistRepository, WishlistRepository>();
+            services.AddScoped<IProductRest, ProductRest>();
             services.AddTransient<IDbConnection>((sp) => new MySqlConnection(Configuration.GetConnectionString("defaultConnection")));
             services.AddScoped<IHttpClientFactoryWrapper, HttpClientFactoryWrapper>();
-            services.AddHttpClient();
+
+            var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(5);
+            services.AddHttpClient("product").AddPolicyHandler(timeoutPolicy);
 
             services
                 .AddMvc()

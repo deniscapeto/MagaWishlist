@@ -7,7 +7,7 @@ namespace MagaWishlist.Core.Wishlist.Interfaces
     {
         Task<Customer> InsertAsync(Customer customer);
         Task<Customer> UpdateAsync(Customer customer);
-        Task DeleteAsync(int id);
+        Task<bool> DeleteAsync(int id);
         Task<Customer> GetByEmailAsync(string email);
         Task<Customer> GetByIdAsync(int id);
     }

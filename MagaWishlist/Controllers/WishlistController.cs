@@ -1,58 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using MagaWishlist.Core.Wishlist.Interfaces;
 using MagaWishlist.Core.Wishlist.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagaWishlist.Controllers
 {
-    //[Route("api/[controller]")]
     [ApiController]
     public class WishlistController : ControllerBase
     {
-        [HttpGet]
-        [Route("api/customer/{idCustomer}/wishlist/")]
-        [Authorize]
-        public async Task<ActionResult<List<Product>>> GetWishlistAsync(int id)
+        readonly IWishlistService _wishlistService;
+        public WishlistController(IWishlistService wishlistService)
         {
-            var customer = new Customer();
-            customer.AddToWishlist(1);
-            return customer.Wishlist;
+            _wishlistService = wishlistService;
         }
 
-        //// GET: api/Wishlist
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
+        [HttpGet]
+        [Route("api/customer/{customerId}/wishlist/")]
+        [Authorize]
+        public async Task<ActionResult<List<WishListProduct>>> GetWishlistAsync(int customerId)
+        {
+            if (customerId == 0)
+                return BadRequest("custumerId was not provided");
 
-        //// GET: api/Wishlist/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+            var result = await _wishlistService.GetCustomerWishlistAsync(customerId);
 
-        //// POST: api/Wishlist
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
+            if (result == null)
+                return NotFound();
 
-        //// PUT: api/Wishlist/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+            return Ok(result);
+        }
 
-        //// DELETE: api/ApiWithActions/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        [HttpPost]
+        [Route("api/customer/{customerId}/wishlist/{productId}")]
+        public async Task<ActionResult<WishListProduct>> PostAsync(int customerId, string productId)
+        {
+            var result = await _wishlistService.AddProductToCustomerrWishlistAsync(customerId, productId);
+
+            if (result == null)
+                return NotFound();
+
+            return Created($"/api/{customerId}/wishlist/{productId}", result);
+        }
+
+        [HttpDelete]
+        [Route("api/customer/{customerId}/wishlist/{productId}")]
+        public async Task<ActionResult> DeleteAsync(int customerId, string productId)
+        {
+            var success = await _wishlistService.RemoveProductFromCustomerrWishlistAsync(customerId, productId);
+
+            if (success)
+                return Ok();
+            else
+                return NotFound();
+        }
+
     }
 }

@@ -112,10 +112,11 @@ namespace MagaWishlist.UnitTests.Core.Services
 
             //Act
             var sut = new CustomerService(_customerRepository);
-            await sut.DeleteCustomerAsync(id);
+            var result = await sut.DeleteCustomerAsync(id);
 
             //Assert
             await _customerRepository.DidNotReceive().DeleteAsync(Arg.Any<int>());
+            Assert.False(result);
         }
 
         [Fact]
@@ -126,13 +127,15 @@ namespace MagaWishlist.UnitTests.Core.Services
 
             Customer existingCustomer = new Customer() { Id = 1, Name = "name", Email = "email-fake" };
             _customerRepository.GetByIdAsync(id).Returns(existingCustomer);
+            _customerRepository.DeleteAsync(id).Returns(true);
 
             //Act
             var sut = new CustomerService(_customerRepository);
-            await sut.DeleteCustomerAsync(id);
+            var result = await sut.DeleteCustomerAsync(id);
 
             //Assert
             await _customerRepository.Received().DeleteAsync(id);
+            Assert.True(result);
         }
 
         [Fact]

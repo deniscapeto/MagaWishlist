@@ -5,6 +5,6 @@ namespace MagaWishlist.Core.Wishlist.Interfaces
 {
     public interface IProductRest
     {
-        Task<Product> GetProductByIdAsync(int id);
+        Task<WishListProduct> GetProductByIdAsync(string id);
     }
 }

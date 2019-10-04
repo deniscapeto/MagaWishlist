@@ -31,12 +31,12 @@ namespace MagaWishlist.Core.Wishlist.Services
             return _customerRepository.GetByIdAsync(id);
         }
 
-        public async Task DeleteCustomerAsync(int id)
+        public async Task<bool> DeleteCustomerAsync(int id)
         {
             if (!await CustomerIdExistsAsync(id))
-                return;
+                return false;
 
-            await _customerRepository.DeleteAsync(id);
+            return await _customerRepository.DeleteAsync(id);
         }
 
         public async Task<Customer> UpdateCustomerAsync(Customer customer)

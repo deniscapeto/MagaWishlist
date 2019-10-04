@@ -14,12 +14,14 @@ namespace MagaWishlist.Data
             _connection = connection;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            return _connection.ExecuteAsync(
+            var rowsAffected = await _connection.ExecuteAsync(
                 "DELETE " +
                 "FROM Customers " +
                 "WHERE Id = @id", new { id });
+
+            return rowsAffected == 1;
         }
 
         public Task<Customer> GetByEmailAsync(string email)
