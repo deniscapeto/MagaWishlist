@@ -8,6 +8,7 @@ using System.Net;
 using MagaWishlist.Core.Wishlist.Interfaces;
 using MagaWishlist.Core.Wishlist.Models;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace MagaWishlist.UnitTests.API.Controllers
 {
@@ -67,6 +68,46 @@ namespace MagaWishlist.UnitTests.API.Controllers
 
             //Assert            
             Assert.Equal((int)HttpStatusCode.OK, (result.Result as ObjectResult).StatusCode);
+        }
+
+        [Fact]
+        public async Task GetWishlistAsync_shouldReturnVlidBody_WhenItIsPossibleToGet()
+        {
+            //Arrange
+            int id = 1;
+            var productId = "1bf0f365-fbdd-4e21-9786-da459d78dd1f";
+            var url = "http://images.luizalabs.com/123.png";
+            var wishlistProduct = new WishListProduct()
+            {
+                Id = 1,
+                ProductId = productId,
+                Image = url,
+                Price = "30.00",
+                Title = "Product123"
+            };
+            List<WishListProduct> existingList = new List<WishListProduct>() { wishlistProduct };
+            _wishlistService.GetCustomerWishlistAsync(id).Returns(existingList);
+
+            var sut = new WishlistController(_wishlistService);
+
+            //Act 
+            var result = await sut.GetWishlistAsync(id);
+
+            //Assert            
+            Assert.Equal((int)HttpStatusCode.OK, (result.Result as ObjectResult).StatusCode);
+
+            var json = JsonConvert.SerializeObject((result.Result as ObjectResult).Value);
+
+            var expected = "[" +
+                "{" +
+                $"\"productId\":\"{productId}\"," +
+                "\"price\":\"30.00\"," +
+                $"\"image\":\"{url}\"," +
+                "\"title\":\"Product123\"" +
+                "}" +
+                "]";
+
+            Assert.Equal(expected, json, ignoreCase:true, ignoreLineEndingDifferences:true, ignoreWhiteSpaceDifferences:true);
         }
 
         [Fact]

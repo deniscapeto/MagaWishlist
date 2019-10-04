@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Net.Http;
 using System.Text;
 using MagaWishlist.Core.Authentication.Interfaces;
@@ -34,18 +35,33 @@ namespace MagaWishlist
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IJwtSecurityTokenHelper, JwtSecurityTokenHelper>();
+
+            //SERVICES
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IWishlistService, WishlistService>();
+
+            //RESPOSITORIES
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IWishlistRepository, WishlistRepository>();
-            services.AddScoped<IProductRest, ProductRest>();
             services.AddTransient<IDbConnection>((sp) => new MySqlConnection(Configuration.GetConnectionString("defaultConnection")));
+            
+            //REST
+            services.AddScoped<IProductRest, ProductRest>();
             services.AddScoped<IHttpClientFactoryWrapper, HttpClientFactoryWrapper>();
 
-            var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(5);
-            services.AddHttpClient("product").AddPolicyHandler(timeoutPolicy);
+            //TIMEOUT AND CIRCUIT BREAKER POLICIES
+            var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(5));
+            services.AddHttpClient("product")
+                .AddPolicyHandler(timeoutPolicy)
+                .AddTransientHttpErrorPolicy(
+                    policyBuilder => 
+                    policyBuilder.CircuitBreakerAsync(
+                        handledEventsAllowedBeforeBreaking: 2,
+                        durationOfBreak: TimeSpan.FromMinutes(1)
+                    )
+                ); 
 
             services
                 .AddMvc()

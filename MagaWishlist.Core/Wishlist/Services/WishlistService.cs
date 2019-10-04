@@ -2,6 +2,7 @@
 using MagaWishlist.Core.Wishlist.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,6 +37,13 @@ namespace MagaWishlist.Core.Wishlist.Services
 
             if (customer == null)
                 return default;
+
+            var customerWishlist = await GetCustomerWishlistAsync(customerId);
+
+            var current = customerWishlist.FirstOrDefault(p => p.ProductId == productId);
+
+            if(current != null)
+                return current;
 
             var product = await _productRest.GetProductByIdAsync(productId);
 
