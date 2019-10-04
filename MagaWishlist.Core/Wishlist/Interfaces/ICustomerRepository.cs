@@ -1,7 +1,7 @@
-﻿using MagaWishlist.Core.Authorization.Models;
+﻿using MagaWishlist.Core.Wishlist.Models;
 using System.Threading.Tasks;
 
-namespace MagaWishlist.Core.Authorization.Interfaces
+namespace MagaWishlist.Core.Wishlist.Interfaces
 {
     public interface ICustomerRepository
     {

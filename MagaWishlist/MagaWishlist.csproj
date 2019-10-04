@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MagaWishlist.Core\MagaWishlist.Core.csproj" />
     <ProjectReference Include="..\MagaWishlist.Data\MagaWishlist.Data.csproj" />
+    <ProjectReference Include="..\MagaWishlist.Rest\MagaWishlist.Rest.csproj" />
   </ItemGroup>
 
 </Project>

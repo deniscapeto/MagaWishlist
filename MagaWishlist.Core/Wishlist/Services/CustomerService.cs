@@ -1,14 +1,14 @@
-﻿using MagaWishlist.Core.Authorization.Interfaces;
-using MagaWishlist.Core.Authorization.Models;
+﻿using MagaWishlist.Core.Wishlist.Interfaces;
+using MagaWishlist.Core.Wishlist.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace MagaWishlist.Core.Authorization.Services
+namespace MagaWishlist.Core.Wishlist.Services
 {
-    public class WishlistService : IWishlistService
+    public class CustomerService : ICustomerService
     {
         readonly ICustomerRepository _customerRepository;
-        public WishlistService(ICustomerRepository customerRepository)
+        public CustomerService(ICustomerRepository customerRepository)
         {
             _customerRepository = customerRepository ?? throw new ArgumentException("customerRepository");
         }

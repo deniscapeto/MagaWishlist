@@ -1,16 +1,16 @@
 using NSubstitute;
 using System.Threading.Tasks;
 using Xunit;
-using MagaWishlist.Core.Authorization.Interfaces;
-using MagaWishlist.Core.Authorization.Models;
-using MagaWishlist.Core.Authorization.Services;
+using MagaWishlist.Core.Wishlist.Interfaces;
+using MagaWishlist.Core.Wishlist.Models;
+using MagaWishlist.Core.Wishlist.Services;
 
 namespace MagaWishlist.UnitTests.Core.Services
 {
-    public class WishlistServiceTests
+    public class CustomerServiceTests
     {
         readonly ICustomerRepository _customerRepository;
-        public WishlistServiceTests()
+        public CustomerServiceTests()
         {
             _customerRepository = Substitute.For<ICustomerRepository>();
         }
@@ -25,7 +25,7 @@ namespace MagaWishlist.UnitTests.Core.Services
             _customerRepository.GetByEmailAsync(email).Returns(existingCustomer);
 
             //Act
-            var sut = new WishlistService(_customerRepository);
+            var sut = new CustomerService(_customerRepository);
             var cutomerReturn = await sut.AddNewCustomerAsync("name", email);
 
             //Assert
@@ -42,7 +42,7 @@ namespace MagaWishlist.UnitTests.Core.Services
             _customerRepository.GetByEmailAsync(email).Returns(nullReturn);
 
             //Act
-            var sut = new WishlistService(_customerRepository);
+            var sut = new CustomerService(_customerRepository);
             var cutomerReturn = await sut.AddNewCustomerAsync("name", email);
 
             //Assert
@@ -65,7 +65,7 @@ namespace MagaWishlist.UnitTests.Core.Services
             _customerRepository.GetByIdAsync(id).Returns(nullReturn);
 
             //Act
-            var sut = new WishlistService(_customerRepository);
+            var sut = new CustomerService(_customerRepository);
             var cutomerReturn = await sut.UpdateCustomerAsync(new Customer());
 
             //Assert
@@ -86,7 +86,7 @@ namespace MagaWishlist.UnitTests.Core.Services
             _customerRepository.GetByIdAsync(id).Returns(existingCustomer);
 
             //Act
-            var sut = new WishlistService(_customerRepository);
+            var sut = new CustomerService(_customerRepository);
             await sut.UpdateCustomerAsync(updatedCustomer);
 
             //Assert
@@ -111,7 +111,7 @@ namespace MagaWishlist.UnitTests.Core.Services
             _customerRepository.GetByIdAsync(id).Returns(nullReturn);
 
             //Act
-            var sut = new WishlistService(_customerRepository);
+            var sut = new CustomerService(_customerRepository);
             await sut.DeleteCustomerAsync(id);
 
             //Assert
@@ -128,7 +128,7 @@ namespace MagaWishlist.UnitTests.Core.Services
             _customerRepository.GetByIdAsync(id).Returns(existingCustomer);
 
             //Act
-            var sut = new WishlistService(_customerRepository);
+            var sut = new CustomerService(_customerRepository);
             await sut.DeleteCustomerAsync(id);
 
             //Assert
@@ -145,7 +145,7 @@ namespace MagaWishlist.UnitTests.Core.Services
             _customerRepository.GetByIdAsync(1).Returns(existingCustomer);
 
             //Act
-            var sut = new WishlistService(_customerRepository);
+            var sut = new CustomerService(_customerRepository);
             var customer = await sut.GetCustomerAsync(1);
 
             //Assert

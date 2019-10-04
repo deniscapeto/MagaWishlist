@@ -2,10 +2,12 @@
 using System.Text;
 using MagaWishlist.Core.Authentication.Interfaces;
 using MagaWishlist.Core.Authentication.Services;
-using MagaWishlist.Core.Authorization.Interfaces;
-using MagaWishlist.Core.Authorization.Services;
+using MagaWishlist.Core.Wishlist.Interfaces;
+using MagaWishlist.Core.Wishlist.Services;
 using MagaWishlist.Data;
 using MagaWishlist.Models;
+using MagaWishlist.Rest;
+using MagaWishlist.Rest.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,9 +34,11 @@ namespace MagaWishlist
             services.AddScoped<IJwtSecurityTokenHelper, JwtSecurityTokenHelper>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IWishlistService, WishlistService>();
+            services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddTransient<IDbConnection>((sp) => new MySqlConnection(Configuration.GetConnectionString("defaultConnection")));
+            services.AddScoped<IHttpClientFactoryWrapper, HttpClientFactoryWrapper>();
+            services.AddHttpClient();
 
             services
                 .AddMvc()

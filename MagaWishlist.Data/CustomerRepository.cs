@@ -1,6 +1,6 @@
 ﻿using Dapper;
-using MagaWishlist.Core.Authorization.Interfaces;
-using MagaWishlist.Core.Authorization.Models;
+using MagaWishlist.Core.Wishlist.Interfaces;
+using MagaWishlist.Core.Wishlist.Models;
 using System.Data;
 using System.Threading.Tasks;
 

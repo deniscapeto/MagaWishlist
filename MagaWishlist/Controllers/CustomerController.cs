@@ -1,7 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using MagaWishlist.Core.Authorization.Interfaces;
-using MagaWishlist.Core.Authorization.Models;
+using MagaWishlist.Core.Wishlist.Interfaces;
+using MagaWishlist.Core.Wishlist.Models;
 using MagaWishlist.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +14,16 @@ namespace MagaWishlist.Controllers
     [Authorize]
     public class CustomerController : ControllerBase
     {
-        readonly IWishlistService _wishlistService;
-        public CustomerController(IWishlistService wishlistService)
+        readonly ICustomerService _customerService;
+        public CustomerController(ICustomerService customerService)
         {
-            _wishlistService = wishlistService;
+            _customerService = customerService;
         }
 
         [HttpGet("{id}", Name = "Get")]
         public async Task<ActionResult<CustomerViewModel>> GetAsync(int id)
         {
-            var customer = await _wishlistService.GetCustomerAsync(id);
+            var customer = await _customerService.GetCustomerAsync(id);
 
             if (customer == null)
                 return NotFound(id);
@@ -49,7 +50,7 @@ namespace MagaWishlist.Controllers
                 return BadRequest(errors);
             }
 
-            var customerAdded = await _wishlistService.AddNewCustomerAsync(customer.Name, customer.Email);
+            var customerAdded = await _customerService.AddNewCustomerAsync(customer.Name, customer.Email);
 
             if (customerAdded == null)
                 return Conflict($"Email {customer.Email} is already being used");
@@ -79,7 +80,7 @@ namespace MagaWishlist.Controllers
                 return BadRequest("Please provide valid customer ID to update");
 
             var customerToUpdate = new Customer() { Id = id, Email = customer.Email, Name = customer.Name };
-            var customerUpdated = await _wishlistService.UpdateCustomerAsync(customerToUpdate);
+            var customerUpdated = await _customerService.UpdateCustomerAsync(customerToUpdate);
 
             if (customerUpdated != null)
                 return Ok(new CustomerViewModel()
@@ -99,7 +100,7 @@ namespace MagaWishlist.Controllers
             if (id == 0)
                 return BadRequest("Please provide valid customer ID to delete");
 
-            await _wishlistService.DeleteCustomerAsync(id);
+            await _customerService.DeleteCustomerAsync(id);
 
             return NoContent();
         }

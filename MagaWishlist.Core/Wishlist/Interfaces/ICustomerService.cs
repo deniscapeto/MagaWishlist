@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using MagaWishlist.Core.Authorization.Models;
+using MagaWishlist.Core.Wishlist.Models;
 
-namespace MagaWishlist.Core.Authorization.Interfaces
+namespace MagaWishlist.Core.Wishlist.Interfaces
 {
-    public interface IWishlistService
+    public interface ICustomerService
     {
         Task<Customer> AddNewCustomerAsync(string name, string email);
         Task DeleteCustomerAsync(int id);

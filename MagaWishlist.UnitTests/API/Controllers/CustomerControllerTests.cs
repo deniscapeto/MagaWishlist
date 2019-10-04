@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 using MagaWishlist.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using MagaWishlist.Core.Authorization.Interfaces;
-using MagaWishlist.Core.Authorization.Models;
+using MagaWishlist.Core.Wishlist.Interfaces;
+using MagaWishlist.Core.Wishlist.Models;
 
 namespace MagaWishlist.UnitTests.API.Controllers
 {
     public class CustomerControllerTests
     {
-        readonly IWishlistService _wishlistService;
+        readonly ICustomerService _customerService;
         public CustomerControllerTests()
         {
-            _wishlistService = Substitute.For<IWishlistService>();
+            _customerService = Substitute.For<ICustomerService>();
         }
 
         [Fact]
@@ -24,9 +24,9 @@ namespace MagaWishlist.UnitTests.API.Controllers
             //Arrange
             int id = 1;
             Customer notFound = null;
-            _wishlistService.GetCustomerAsync(id).Returns(notFound);
+            _customerService.GetCustomerAsync(id).Returns(notFound);
 
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
 
             //Act 
             var result = await sut.GetAsync(id);
@@ -41,9 +41,9 @@ namespace MagaWishlist.UnitTests.API.Controllers
             //Arrange
             int id = 1;
             Customer existingCustomer = new Customer() { Id = 1, Name = "name", Email = "email-fake" };
-            _wishlistService.GetCustomerAsync(id).Returns(existingCustomer);
+            _customerService.GetCustomerAsync(id).Returns(existingCustomer);
 
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
 
             //Act 
             var result = await sut.GetAsync(id);
@@ -59,7 +59,7 @@ namespace MagaWishlist.UnitTests.API.Controllers
             int id = 1;
             CustomerViewModel newCustomer = new CustomerViewModel() { Name = "name", Email = "email-fake" };
             
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
             sut.ModelState.AddModelError("", "invalid data");
 
 
@@ -78,9 +78,9 @@ namespace MagaWishlist.UnitTests.API.Controllers
             string email = "fake@email.com";
             CustomerViewModel newCustomer = new CustomerViewModel() { Name = "name", Email = email };
             Customer existingCustomer = new Customer() { Id = 1, Name = "name", Email = email };
-            _wishlistService.GetCustomerAsync(id).Returns(existingCustomer);
+            _customerService.GetCustomerAsync(id).Returns(existingCustomer);
 
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
 
             //Act 
             var result = (ObjectResult)await sut.PostAsync(newCustomer);
@@ -96,7 +96,7 @@ namespace MagaWishlist.UnitTests.API.Controllers
             int id = 1;
             CustomerViewModel modifiedCustomer = new CustomerViewModel() { Name = "name", Email = "email-fake" };
 
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
             sut.ModelState.AddModelError("", "invalid data");
 
 
@@ -114,7 +114,7 @@ namespace MagaWishlist.UnitTests.API.Controllers
             int id = 0;
             CustomerViewModel modifiedCustomer = new CustomerViewModel() { Name = "name", Email = "email-fake" };
 
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
             sut.ModelState.AddModelError("", "invalid data");
 
 
@@ -135,16 +135,16 @@ namespace MagaWishlist.UnitTests.API.Controllers
             CustomerViewModel modifiedCustomerViewModel = new CustomerViewModel() { Name = "name complete", Email = email };
             Customer modifiedCustomer = new Customer() { Id = id, Name = "name complete", Email = email };
 
-            _wishlistService.UpdateCustomerAsync(Arg.Any<Customer>()).Returns(modifiedCustomer);
+            _customerService.UpdateCustomerAsync(Arg.Any<Customer>()).Returns(modifiedCustomer);
 
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
 
             //Act 
             var result = (ObjectResult)await sut.PutAsync(id, modifiedCustomerViewModel);
 
             //Assert            
             Assert.Equal((int)HttpStatusCode.OK, result.StatusCode);
-            _ = _wishlistService.Received(1).UpdateCustomerAsync(Arg.Is<Customer>(
+            _ = _customerService.Received(1).UpdateCustomerAsync(Arg.Is<Customer>(
                 x =>
                 x.Id == id &&
                 x.Email == email &&
@@ -161,16 +161,16 @@ namespace MagaWishlist.UnitTests.API.Controllers
             CustomerViewModel modifiedCustomerViewModel = new CustomerViewModel() { Name = "name complete", Email = email };
             Customer nullReturn = null;
 
-            _wishlistService.UpdateCustomerAsync(Arg.Any<Customer>()).Returns(nullReturn);
+            _customerService.UpdateCustomerAsync(Arg.Any<Customer>()).Returns(nullReturn);
 
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
 
             //Act 
             var result = (ObjectResult)await sut.PutAsync(id, modifiedCustomerViewModel);
 
             //Assert            
             Assert.Equal((int)HttpStatusCode.NotFound, result.StatusCode);
-            _ = _wishlistService.Received(1).UpdateCustomerAsync(Arg.Is<Customer>(
+            _ = _customerService.Received(1).UpdateCustomerAsync(Arg.Is<Customer>(
                 x =>
                 x.Id == id &&
                 x.Email == email &&
@@ -184,7 +184,7 @@ namespace MagaWishlist.UnitTests.API.Controllers
             //Arrange
             int id = 0;
 
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
 
             //Act 
             var result = (ObjectResult)await sut.DeleteAsync(id);
@@ -199,7 +199,7 @@ namespace MagaWishlist.UnitTests.API.Controllers
             //Arrange
             int id = 1;
 
-            var sut = new CustomerController(_wishlistService);
+            var sut = new CustomerController(_customerService);
 
             //Act 
             var result = (StatusCodeResult)await sut.DeleteAsync(id);

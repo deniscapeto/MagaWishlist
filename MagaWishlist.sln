@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagaWishlist.Core", "MagaWi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagaWishlist.Data", "MagaWishlist.Data\MagaWishlist.Data.csproj", "{98B65C1E-766F-485D-8C63-FF126DE5529B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagaWishlist.UnitTests", "MagaWishlist.UnitTests\MagaWishlist.UnitTests.csproj", "{FCE8EED4-4020-4313-A698-FD69FF678302}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagaWishlist.UnitTests", "MagaWishlist.UnitTests\MagaWishlist.UnitTests.csproj", "{FCE8EED4-4020-4313-A698-FD69FF678302}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagaWishlist.Rest", "MagaWishlist.Rest\MagaWishlist.Rest.csproj", "{24B5D012-7B17-488D-A826-0A841F3926F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{FCE8EED4-4020-4313-A698-FD69FF678302}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCE8EED4-4020-4313-A698-FD69FF678302}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCE8EED4-4020-4313-A698-FD69FF678302}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24B5D012-7B17-488D-A826-0A841F3926F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24B5D012-7B17-488D-A826-0A841F3926F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24B5D012-7B17-488D-A826-0A841F3926F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24B5D012-7B17-488D-A826-0A841F3926F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
