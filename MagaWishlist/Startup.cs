@@ -7,6 +7,7 @@ using MagaWishlist.Core.Authentication.Services;
 using MagaWishlist.Core.Wishlist.Interfaces;
 using MagaWishlist.Core.Wishlist.Services;
 using MagaWishlist.Data;
+using MagaWishlist.Middlewares;
 using MagaWishlist.Models;
 using MagaWishlist.Rest;
 using MagaWishlist.Rest.Interfaces;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
 using Polly;
@@ -67,8 +69,13 @@ namespace MagaWishlist
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.Configure<JwtAuthentication>(Configuration.GetSection("JwtAuthentication"));
+            services.AddLogging(logging =>
+            {
+                logging.AddConfiguration(Configuration.GetSection("Logging"));
+                logging.AddConsole();
+            });
 
+            services.Configure<JwtAuthentication>(Configuration.GetSection("JwtAuthentication"));
             services.AddAuthentication(x => 
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -91,17 +98,18 @@ namespace MagaWishlist
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseErrorLoggingMiddleware();
             }
             else
             {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                app.UseExceptionHandler();
+                app.UseErrorLoggingMiddleware();
             }
             app.UseAuthentication();
             app.UseHttpsRedirection();
