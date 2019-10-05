@@ -25,7 +25,6 @@ namespace MagaWishlist.UnitTests.API.Controllers
         {
             //Arrange
             int id = 0;
-            List<WishListProduct> notFound = null;
 
             var sut = new WishlistController(_wishlistService);
 
@@ -147,6 +146,22 @@ namespace MagaWishlist.UnitTests.API.Controllers
         }
 
         [Fact]
+        public async Task Post_shouldReturnBadRequest_WhenProductIdIsNotProvided()
+        {
+            //Arrange
+            int customerId = 1;
+            string productId = "";
+
+            var sut = new WishlistController(_wishlistService);
+
+            //Act 
+            var result = await sut.PostAsync(customerId, productId);
+
+            //Assert            
+            Assert.Equal((int)HttpStatusCode.BadRequest, (result.Result as ObjectResult).StatusCode);
+        }
+
+        [Fact]
         public async Task Delete_shouldReturnOk_WhenItIsPossibleToAddProduct()
         {
             //Arrange
@@ -178,6 +193,22 @@ namespace MagaWishlist.UnitTests.API.Controllers
 
             //Assert            
             Assert.Equal((int)HttpStatusCode.NotFound, (result as StatusCodeResult).StatusCode);
+        }
+
+        [Fact]
+        public async Task Delete_shouldReturnBadRequest_WhenProductIdIsNotProvided()
+        {
+            //Arrange
+            int customerId = 1;
+            string productId = "";
+
+            var sut = new WishlistController(_wishlistService);
+
+            //Act 
+            var result = await sut.DeleteAsync(customerId, productId);
+
+            //Assert            
+            Assert.Equal((int)HttpStatusCode.BadRequest, (result as ObjectResult).StatusCode);
         }
 
     }

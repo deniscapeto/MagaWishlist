@@ -22,8 +22,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 using MySql.Data.MySqlClient;
 using Polly;
+using System.IO;
+using Microsoft.Extensions.PlatformAbstractions;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace MagaWishlist
 {
@@ -109,6 +113,34 @@ namespace MagaWishlist
                     ValidIssuer = Configuration["JwtAuthentication:Issuer"],
                 };
             });
+
+            //SWAGGER
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Title = "MagaWishlist API REST",
+                    Version = "v1",
+                    Description = "API REST"
+                });
+
+                string appPath = PlatformServices.Default.Application.ApplicationBasePath;
+                string appName = PlatformServices.Default.Application.ApplicationName;
+                string xmlDocPath = Path.Combine(appPath, $"{appName}.xml");
+
+                c.IncludeXmlComments(xmlDocPath);
+
+                c.AddSecurityDefinition("oauth2", new ApiKeyScheme
+                {
+                    Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+                    In = "header",
+                    Name = "Authorization",
+                    Type = "apiKey"
+                });
+
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -127,6 +159,13 @@ namespace MagaWishlist
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json",
+                    "MagaWishlist");
+            });
         }
     }
 }

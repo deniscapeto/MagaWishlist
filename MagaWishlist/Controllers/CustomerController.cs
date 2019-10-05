@@ -20,6 +20,13 @@ namespace MagaWishlist.Controllers
             _customerService = customerService;
         }
 
+        /// <summary>
+        /// Get customer informations
+        /// </summary>
+        /// <param name="id">Customer Id</param>
+        /// <returns>Customer Informations</returns>
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         [HttpGet("{id}", Name = "Get")]
         public async Task<ActionResult<CustomerViewModel>> GetAsync(int id)
         {
@@ -37,7 +44,14 @@ namespace MagaWishlist.Controllers
             });
         }
 
+        /// <summary>
+        /// Add new customer with empty wishlist
+        /// </summary>
+        /// <param name="customer">Customer name and e-mail</param>        
         [HttpPost]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(201)]
         public async Task<ActionResult> PostAsync([FromBody] CustomerViewModel customer)
         {
             if (!ModelState.IsValid)
@@ -63,6 +77,17 @@ namespace MagaWishlist.Controllers
             });
         }
 
+        /// <summary>
+        /// Update customer informations. Name and E-mail       
+        /// </summary>
+        /// <remarks>
+        /// Notice that e-mail must be unique. It's not possible to have more than one customer using the same e-mail.
+        /// </remarks>
+        /// <param name="id">customer Id</param>
+        /// <param name="customer">Customer informations</param>
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutAsync(int id, [FromBody] CustomerViewModel customer)
         {
@@ -93,7 +118,14 @@ namespace MagaWishlist.Controllers
                 return NotFound(customer);
         }
 
+        /// <summary>
+        /// Delete a Customer from MagaWishlist 
+        /// </summary>
+        /// <param name="id">customer Id</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
         public async Task<ActionResult> DeleteAsync(int id)
         {
             if (id == 0)
