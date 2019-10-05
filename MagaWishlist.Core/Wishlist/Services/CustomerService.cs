@@ -44,6 +44,9 @@ namespace MagaWishlist.Core.Wishlist.Services
             if (!await CustomerIdExistsAsync(customer.Id))
                 return null;
 
+            if (await CustomerEmailExistsAsync(customer.Email))
+                return null;
+
             return await _customerRepository.UpdateAsync(customer);
         }
 
