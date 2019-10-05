@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Data;
+using System.Data.SQLite;
 using System.Net.Http;
 using System.Text;
+using MagaWishlist.Context;
 using MagaWishlist.Core.Authentication.Interfaces;
 using MagaWishlist.Core.Authentication.Services;
 using MagaWishlist.Core.Wishlist.Interfaces;
@@ -15,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -47,8 +50,18 @@ namespace MagaWishlist
             //RESPOSITORIES
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IWishlistRepository, WishlistRepository>();
-            services.AddTransient<IDbConnection>((sp) => new MySqlConnection(Configuration.GetConnectionString("defaultConnection")));
-            
+
+            if(Configuration["DatabaseType"] == "mysql")
+            {
+                services.AddTransient<IDbConnection>((sp) => new MySqlConnection(Configuration.GetConnectionString("defaultConnection")));
+                services.AddDbContext<MagaWishlistContext>(options => options.UseMySQL(Configuration.GetConnectionString("defaultConnection")));
+            }
+            else
+            {
+                services.AddTransient<IDbConnection>((sp) => new SQLiteConnection("Data Source=magawish.db"));
+                services.AddDbContext<MagaWishlistContext>(options => options.UseSqlite("Data Source=magawish.db"));
+            }
+
             //REST
             services.AddScoped<IProductRest, ProductRest>();
             services.AddScoped<IHttpClientFactoryWrapper, HttpClientFactoryWrapper>();
