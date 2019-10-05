@@ -16,6 +16,11 @@ namespace MagaWishlist.Data
 
         public async Task<bool> DeleteAsync(int id)
         {
+            await _connection.ExecuteAsync(
+                "DELETE " +
+                "FROM wishlistproducts " +
+                "WHERE CustomerId = @id", new { id });
+
             var rowsAffected = await _connection.ExecuteAsync(
                 "DELETE " +
                 "FROM Customers " +

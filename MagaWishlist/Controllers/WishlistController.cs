@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MagaWishlist.Controllers
 {
     [ApiController]
+    [Authorize]
     public class WishlistController : ControllerBase
     {
         readonly IWishlistService _wishlistService;
@@ -18,7 +19,6 @@ namespace MagaWishlist.Controllers
 
         [HttpGet]
         [Route("api/customer/{customerId}/wishlist/")]
-        [Authorize]
         public async Task<ActionResult<List<WishListProduct>>> GetWishlistAsync(int customerId)
         {
             if (customerId == 0)
