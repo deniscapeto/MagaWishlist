@@ -10,6 +10,8 @@ namespace MagaWishlist.UnitTests.Core.Services
     public class CustomerServiceTests
     {
         readonly ICustomerRepository _customerRepository;
+        readonly Customer existingCustomer = new Customer() { Id = 1, Name = "name", Email = "email-fake" };
+        readonly Customer nullReturn = null;
         public CustomerServiceTests()
         {
             _customerRepository = Substitute.For<ICustomerRepository>();
@@ -19,14 +21,11 @@ namespace MagaWishlist.UnitTests.Core.Services
         public async Task AddNewCustomerAsync_ShouldReturnNull_WhenCustomerDoesExist()
         {
             //Arrange
-            string email = "fake-email";
-
-            Customer existingCustomer = new Customer() { Name = "name", Email = email };
-            _customerRepository.GetByEmailAsync(email).Returns(existingCustomer);
+            _customerRepository.GetByEmailAsync(Arg.Any<string>()).Returns(existingCustomer);
 
             //Act
             var sut = new CustomerService(_customerRepository);
-            var cutomerReturn = await sut.AddNewCustomerAsync("name", email);
+            var cutomerReturn = await sut.AddNewCustomerAsync("name", existingCustomer.Email);
 
             //Assert
             Assert.Null(cutomerReturn);
@@ -37,8 +36,6 @@ namespace MagaWishlist.UnitTests.Core.Services
         {
             //Arrange
             string email = "fake-email";
-
-            Customer nullReturn = null;
             _customerRepository.GetByEmailAsync(email).Returns(nullReturn);
 
             //Act
@@ -60,8 +57,6 @@ namespace MagaWishlist.UnitTests.Core.Services
         {
             //Arrange
             int id = 1;
-
-            Customer nullReturn = null;
             _customerRepository.GetByIdAsync(id).Returns(nullReturn);
 
             //Act
@@ -76,12 +71,54 @@ namespace MagaWishlist.UnitTests.Core.Services
         }
 
         [Fact]
-        public async Task updateCustomerAsync_ShouldCallRepository_WhenCustomerDoesExist()
+        public async Task UpdateCustomerAsync_ShouldReturnNull_WhenItAlreadyExistACustomerWithTheSameEmail()
         {
             //Arrange
             int id = 1;
+            _customerRepository.GetByIdAsync(id).Returns(nullReturn);
+            _customerRepository.GetByEmailAsync(Arg.Any<string>()).Returns(existingCustomer);
 
-            Customer existingCustomer = new Customer() { Id = 1, Name = "name", Email = "email-fake" };
+            //Act
+            var sut = new CustomerService(_customerRepository);
+            var cutomerReturn = await sut.UpdateCustomerAsync(new Customer());
+
+            //Assert
+            Assert.Null(cutomerReturn);
+            await _customerRepository.DidNotReceive().UpdateAsync(
+                Arg.Any<Customer>()
+                );
+        }
+
+        [Fact]
+        public async Task UpdateCustomerAsync_ShouldCallRepository_WhenTheEmailThatAlreadyExistsBelongsToTheSameCustomer()
+        {
+            //Arrange
+            int id = 1;
+            var modifiedCustomer = new Customer() { Id = 1, Name = "name", Email = "email-fake" };
+            _customerRepository.GetByIdAsync(id).Returns(modifiedCustomer);
+            _customerRepository.GetByEmailAsync(Arg.Any<string>()).Returns(modifiedCustomer);
+
+            //Act
+            var sut = new CustomerService(_customerRepository);
+            var sameCustomer = new Customer()
+            {
+                Id = modifiedCustomer.Id,
+                Email = modifiedCustomer.Email,
+                Name = modifiedCustomer.Name
+            };
+            var cutomerReturn = await sut.UpdateCustomerAsync(sameCustomer);
+
+            //Assert
+            await _customerRepository.Received(1).UpdateAsync(
+                Arg.Any<Customer>()
+                );
+        }
+
+        [Fact]
+        public async Task UpdateCustomerAsync_ShouldCallRepository_WhenCustomerDoesExist()
+        {
+            //Arrange
+            int id = 1;
             Customer updatedCustomer = new Customer() { Id = 1, Name = "name2", Email = "email-fake2" };
             _customerRepository.GetByIdAsync(id).Returns(existingCustomer);
 
@@ -106,8 +143,6 @@ namespace MagaWishlist.UnitTests.Core.Services
         {
             //Arrange
             int id = 1;
-
-            Customer nullReturn = null;
             _customerRepository.GetByIdAsync(id).Returns(nullReturn);
 
             //Act
@@ -124,8 +159,6 @@ namespace MagaWishlist.UnitTests.Core.Services
         {
             //Arrange
             int id = 1;
-
-            Customer existingCustomer = new Customer() { Id = 1, Name = "name", Email = "email-fake" };
             _customerRepository.GetByIdAsync(id).Returns(existingCustomer);
             _customerRepository.DeleteAsync(id).Returns(true);
 
@@ -142,9 +175,6 @@ namespace MagaWishlist.UnitTests.Core.Services
         public async Task GetCustomerAsync_ShouldReturnValidCustomer_WhenCustomerExistsInRepository()
         {
             //Arrange
-            string email = "fake-email";
-
-            Customer existingCustomer = new Customer() { Id = 1, Name = "name", Email = email };
             _customerRepository.GetByIdAsync(1).Returns(existingCustomer);
 
             //Act

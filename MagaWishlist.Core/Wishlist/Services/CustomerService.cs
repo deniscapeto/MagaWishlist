@@ -15,14 +15,15 @@ namespace MagaWishlist.Core.Wishlist.Services
 
         public async Task<Customer> AddNewCustomerAsync(string name, string email)
         {
-            if (await CustomerEmailExistsAsync(email))
-                return null;
-
             var newCustomer = new Customer()
             {
                 Name = name,
                 Email = email
             };
+
+            if (await CustomerEmailExistsAsync(newCustomer))
+                return null;
+
             return await _customerRepository.InsertAsync(newCustomer);
         }
 
@@ -44,7 +45,7 @@ namespace MagaWishlist.Core.Wishlist.Services
             if (!await CustomerIdExistsAsync(customer.Id))
                 return null;
 
-            if (await CustomerEmailExistsAsync(customer.Email))
+            if (await CustomerEmailExistsAsync(customer))
                 return null;
 
             return await _customerRepository.UpdateAsync(customer);
@@ -56,10 +57,14 @@ namespace MagaWishlist.Core.Wishlist.Services
             return existingCustomer != null;
         }
 
-        private async Task<bool> CustomerEmailExistsAsync(string email)
+        private async Task<bool> CustomerEmailExistsAsync(Customer customer)
         {
-            var existingCustomer = await _customerRepository.GetByEmailAsync(email);
-            return existingCustomer != null;
+            var existingCustomer = await _customerRepository.GetByEmailAsync(customer.Email);
+
+            if (existingCustomer == null)
+                return false;
+
+            return existingCustomer.Id != customer.Id;
         }
     }
 }

@@ -10,9 +10,9 @@ namespace MagaWishlist.Core.Wishlist.Services
 {
     public class WishlistService : IWishlistService
     {
-        IProductRest _productRest;
-        ICustomerService _customerService;
-        IWishlistRepository _wishlistRepository;
+        readonly IProductRest _productRest;
+        readonly ICustomerService _customerService;
+        readonly IWishlistRepository _wishlistRepository;
 
         public WishlistService(IProductRest productRest, ICustomerService customerService, IWishlistRepository wishlistRepository)
         {
@@ -23,27 +23,30 @@ namespace MagaWishlist.Core.Wishlist.Services
 
         public async Task<List<WishListProduct>> GetCustomerWishlistAsync(int customerId)
         {
-            var customer = await _customerService.GetCustomerAsync(customerId);
-
-            if (customer == null)
+            if (!await CustomerExists(customerId))
                 return default;
 
             return await _wishlistRepository.GetCustomerWishlistAsync(customerId);
         }
 
-        public async Task<WishListProduct> AddProductToCustomerrWishlistAsync(int customerId, string productId)
+        private async Task<bool> CustomerExists(int customerId)
         {
             var customer = await _customerService.GetCustomerAsync(customerId);
 
-            if (customer == null)
+            return customer != null;
+        }
+
+        public async Task<WishListProduct> AddProductToCustomerrWishlistAsync(int customerId, string productId)
+        {
+            if (!await CustomerExists(customerId))
                 return default;
 
             var customerWishlist = await GetCustomerWishlistAsync(customerId);
 
-            var current = customerWishlist.FirstOrDefault(p => p.ProductId == productId);
+            var existingProduct = customerWishlist.FirstOrDefault(p => p.ProductId == productId);
 
-            if(current != null)
-                return current;
+            if(existingProduct != null)
+                return existingProduct;
 
             var product = await _productRest.GetProductByIdAsync(productId);
 
@@ -52,9 +55,7 @@ namespace MagaWishlist.Core.Wishlist.Services
 
         public async Task<bool> RemoveProductFromCustomerrWishlistAsync(int customerId, string productId)
         {
-            var customer = await _customerService.GetCustomerAsync(customerId);
-
-            if (customer == null)
+            if (!await CustomerExists(customerId))
                 return default;
 
             return await _wishlistRepository.DeleteWishlistProductAsync(productId: productId, customerId: customerId);
