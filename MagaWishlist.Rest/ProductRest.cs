@@ -30,7 +30,7 @@ namespace MagaWishlist.Rest
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException("Product id not provided");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_configuration["ProductApiUrl"]}/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_configuration["ProductAPI:Url"]}/{id}");
 
             HttpResponseMessage response;
             try

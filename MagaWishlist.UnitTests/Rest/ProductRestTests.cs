@@ -26,7 +26,7 @@ namespace MagaWishlist.UnitTests.Core.Services
             _httpClientFactoryWrapper = Substitute.For<IHttpClientFactoryWrapper>();
             _configuration = Substitute.For<IConfiguration>();
             _loggerFactory = Substitute.For<ILoggerFactory>();
-            _configuration["ProductApiUrl"] = "http://mocked.test.com";
+            _configuration["ProductAPI:Url"] = "http://mocked.test.com";
             _logger = Substitute.For<ILogger<ProductRest>>();
             _loggerFactory.CreateLogger<ProductRest>().Returns(_logger);
         }

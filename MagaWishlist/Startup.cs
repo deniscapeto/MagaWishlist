@@ -55,7 +55,7 @@ namespace MagaWishlist
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IWishlistRepository, WishlistRepository>();
 
-            if(Configuration["DatabaseType"] == "mysql")
+            if (Configuration["DatabaseType"] == "mysql")
             {
                 services.AddTransient<IDbConnection>((sp) => new MySqlConnection(Configuration.GetConnectionString("defaultConnection")));
                 services.AddDbContext<MagaWishlistContext>(options => options.UseMySQL(Configuration.GetConnectionString("defaultConnection")));
@@ -70,17 +70,7 @@ namespace MagaWishlist
             services.AddScoped<IProductRest, ProductRest>();
             services.AddScoped<IHttpClientFactoryWrapper, HttpClientFactoryWrapper>();
 
-            //TIMEOUT AND CIRCUIT BREAKER POLICIES
-            var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(5));
-            services.AddHttpClient("product")
-                .AddPolicyHandler(timeoutPolicy)
-                .AddTransientHttpErrorPolicy(
-                    policyBuilder => 
-                    policyBuilder.CircuitBreakerAsync(
-                        handledEventsAllowedBeforeBreaking: 2,
-                        durationOfBreak: TimeSpan.FromMinutes(1)
-                    )
-                ); 
+            ConfigureProductApi(services);
 
             services
                 .AddMvc()
@@ -93,13 +83,13 @@ namespace MagaWishlist
             });
 
             services.Configure<JwtAuthentication>(Configuration.GetSection("JwtAuthentication"));
-            services.AddAuthentication(x => 
+            services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }
             )
-            .AddJwtBearer(x=> 
+            .AddJwtBearer(x =>
             {
                 x.RequireHttpsMetadata = true;
                 x.SaveToken = true;
@@ -141,6 +131,30 @@ namespace MagaWishlist
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
             });
 
+        }
+
+        private void ConfigureProductApi(IServiceCollection services)
+        {
+            if (!int.TryParse(Configuration["ProductAPI:EventsBeforeBreaking"], out int eventsBeforeBreaking))
+                eventsBeforeBreaking = 5;
+
+            if (!double.TryParse(Configuration["ProductAPI:DurationOfBreakInMinutes"], out double durationOfBreakInMinutes))
+                durationOfBreakInMinutes = 1;
+
+            if (!int.TryParse(Configuration["ProductAPI:TimeoutInSeconds"], out int timeoutInSeconds))
+                timeoutInSeconds = 5;
+
+            //TIMEOUT AND CIRCUIT BREAKER POLICIES
+            var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(timeoutInSeconds));
+            services.AddHttpClient("product")
+                .AddPolicyHandler(timeoutPolicy)
+                .AddTransientHttpErrorPolicy(
+                    policyBuilder =>
+                    policyBuilder.CircuitBreakerAsync(
+                        handledEventsAllowedBeforeBreaking: eventsBeforeBreaking,
+                        durationOfBreak: TimeSpan.FromMinutes(durationOfBreakInMinutes)
+                    )
+                );
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
