@@ -15,8 +15,10 @@ namespace MagaWishlist.Rest
 
         public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, string policyName)
         {
-            var httpClient = string.IsNullOrEmpty(policyName) ? _httpClientFactory.CreateClient(): _httpClientFactory.CreateClient(policyName);
-            return httpClient.SendAsync(request);
+            using (var httpClient = string.IsNullOrEmpty(policyName) ? _httpClientFactory.CreateClient() : _httpClientFactory.CreateClient(policyName))
+            {
+                return httpClient.SendAsync(request);
+            }
         }
     }
 }

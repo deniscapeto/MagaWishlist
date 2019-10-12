@@ -19,7 +19,7 @@ namespace MagaWishlist.Context
         { }
         public DbSet<User> Users { get; set; }
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<WishListProduct> wishListProducts { get; set;}
+        public DbSet<WishListProduct> WishListProducts { get; set;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

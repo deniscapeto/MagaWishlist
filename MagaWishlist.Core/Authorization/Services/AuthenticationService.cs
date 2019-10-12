@@ -1,5 +1,4 @@
 ﻿using MagaWishlist.Core.Authentication.Interfaces;
-using MagaWishlist.Core.Authentication.Interfaces;
 using MagaWishlist.Core.Authentication.Models;
 using System.Threading.Tasks;
 

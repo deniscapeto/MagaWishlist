@@ -1,4 +1,4 @@
-using NSubstitute;
+﻿using NSubstitute;
 using System.Threading.Tasks;
 using Xunit;
 using MagaWishlist.Core.Wishlist.Models;
@@ -19,7 +19,7 @@ namespace MagaWishlist.UnitTests.Core.Services
         readonly IConfiguration _configuration;
         readonly ILoggerFactory _loggerFactory;
         readonly ILogger<ProductRest> _logger;
-        string productId = "1bf0f365-fbdd-4e21-9786-da459d78dd1f";
+        readonly string _productId = "1bf0f365-fbdd-4e21-9786-da459d78dd1f";
 
         public ProductRestTests()
         {
@@ -40,7 +40,7 @@ namespace MagaWishlist.UnitTests.Core.Services
 
             //Act
             var sut = new ProductRest(_httpClientFactoryWrapper, _configuration, _loggerFactory);
-            var product = await sut.GetProductByIdAsync(productId);
+            var product = await sut.GetProductByIdAsync(_productId);
 
             //Assert
             Assert.NotNull(product);
@@ -55,7 +55,7 @@ namespace MagaWishlist.UnitTests.Core.Services
 
             //Act
             var sut = new ProductRest(_httpClientFactoryWrapper, _configuration, _loggerFactory);
-            var product = await sut.GetProductByIdAsync(productId);
+            var product = await sut.GetProductByIdAsync(_productId);
 
             //Assert
             Assert.NotNull(product);
@@ -69,10 +69,10 @@ namespace MagaWishlist.UnitTests.Core.Services
             var sut = new ProductRest(_httpClientFactoryWrapper, _configuration, _loggerFactory);
 
             //Act
-            Func<Task<WishListProduct>> func = () => sut.GetProductByIdAsync(string.Empty);
+            Task<WishListProduct> func() => sut.GetProductByIdAsync(string.Empty);
 
             //Assert
-            Assert.ThrowsAsync<ArgumentException>(func);
+            await Assert.ThrowsAsync<ArgumentException>(func);
         }
 
         [Fact]
@@ -85,10 +85,10 @@ namespace MagaWishlist.UnitTests.Core.Services
                 .Do((callinfo) => throw new BrokenCircuitException());
 
             //Act
-            Func<Task<WishListProduct>> func = () => sut.GetProductByIdAsync(productId);
+            Task<WishListProduct> func() => sut.GetProductByIdAsync(_productId);
 
             //Assert
-            Assert.ThrowsAsync<HttpRequestException>(func);
+            await Assert.ThrowsAsync<HttpRequestException>(func);
         }
 
         [Fact]
@@ -101,23 +101,25 @@ namespace MagaWishlist.UnitTests.Core.Services
                 .Do((callinfo) => throw new TimeoutRejectedException());
 
             //Act
-            Func<Task<WishListProduct>> func = () => sut.GetProductByIdAsync(productId);
+            Task<WishListProduct> func() => sut.GetProductByIdAsync(_productId);
 
             //Assert
-            Assert.ThrowsAsync<HttpRequestException>(func);
+            await Assert.ThrowsAsync<HttpRequestException>(func);
         }
 
         private static HttpResponseMessage GetSuccessMockResponse()
         {
             //Arrange
-            HttpResponseMessage response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            response.Content = new StringContent("{" +
+            HttpResponseMessage response = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            {
+                Content = new StringContent("{" +
                 "\"price\": 1699.0, " +
                 "\"image\": \"http://challenge-api.luizalabs.com/images/1bf0f365-fbdd-4e21-9786-da459d78dd1f.jpg\", " +
                 "\"brand\": \"b\u00e9b\u00e9 confort\", " +
                 "\"id\": \"1bf0f365-fbdd-4e21-9786-da459d78dd1f\", " +
                 "\"title\": \"Cadeira para Auto Iseos B\u00e9b\u00e9 Confort Earth Brown\"" +
-                "}");
+                "}")
+            };
             return response;
         }
 

@@ -56,7 +56,6 @@ namespace MagaWishlist.UnitTests.API.Controllers
         public async Task PostAsync_shouldReturnBadRequest_WhenInvalidInput()
         {
             //Arrange
-            int id = 1;
             CustomerViewModel newCustomer = new CustomerViewModel() { Name = "name", Email = "email-fake" };
             
             var sut = new CustomerController(_customerService);

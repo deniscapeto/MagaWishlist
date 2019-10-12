@@ -11,7 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagaWishlist.Data", "MagaWi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagaWishlist.UnitTests", "MagaWishlist.UnitTests\MagaWishlist.UnitTests.csproj", "{FCE8EED4-4020-4313-A698-FD69FF678302}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagaWishlist.Rest", "MagaWishlist.Rest\MagaWishlist.Rest.csproj", "{24B5D012-7B17-488D-A826-0A841F3926F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagaWishlist.Rest", "MagaWishlist.Rest\MagaWishlist.Rest.csproj", "{24B5D012-7B17-488D-A826-0A841F3926F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6E85964E-1BCC-42E2-B0E2-C32AE0520131}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
