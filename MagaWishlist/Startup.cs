@@ -16,14 +16,12 @@ using MagaWishlist.Rest.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.Swagger;
 using MySql.Data.MySqlClient;
 using Polly;
 using System.IO;
@@ -79,9 +77,7 @@ namespace MagaWishlist
 
             ConfigureProductApi(services);
 
-            services
-                .AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddMvc();
 
             services.AddLogging(logging =>
             {
@@ -114,7 +110,7 @@ namespace MagaWishlist
             //SWAGGER
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Title = "MagaWishlist API REST",
                     Version = "v1",
@@ -127,12 +123,12 @@ namespace MagaWishlist
 
                 c.IncludeXmlComments(xmlDocPath);
 
-                c.AddSecurityDefinition("oauth2", new ApiKeyScheme
+                c.AddSecurityDefinition("oauth2", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
                 {
                     Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
-                    In = "header",
+                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
                     Name = "Authorization",
-                    Type = "apiKey"
+                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
                 });
 
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
@@ -179,7 +175,6 @@ namespace MagaWishlist
             }
             app.UseAuthentication();
             app.UseHttpsRedirection();
-            app.UseMvc();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
